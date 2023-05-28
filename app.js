@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const ejs = require('ejs');
+const encrypt = require('mongoose-encryption');
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -16,11 +17,15 @@ mongoose.connect('mongodb://localhost:27017/userDB', { useNewUrlParser: true, us
     console.error('Error connecting to MongoDB:', error);
   });
 
-const userSchema = {
+const userSchema = new mongoose.Schema({
     email:String,
     password:String
-}
+});
 
+const secret = "anjalikarajput";
+userSchema.plugin(encrypt, { secret: secret, encryptedFields:['password'] }); 
+// Always use the plugin before creating the mongoose model
+ 
 const User = new mongoose.model("User", userSchema);
 
 
